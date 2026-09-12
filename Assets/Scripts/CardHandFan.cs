@@ -11,10 +11,21 @@ public class CardHandFan : MonoBehaviour
     [Header("Positioning")]
     public float verticalOffset = 0f; // Move the whole fan up (positive) or down (negative)
 
+    [Header("Make-Way Animation")]
+    public float positionSmoothTime = 0.12f; // Lower = snappier, higher = floatier slide
+    public float rotationSpeed = 12f;
+
+    private Vector3[] velocities = new Vector3[0]; // SmoothDamp needs per-card velocity state
+
     void Update()
     {
         int childCount = transform.childCount;
         if (childCount == 0) return;
+
+        if(velocities.Length != childCount)
+        {
+            velocities = new Vector3[childCount];
+        }
 
         float midIndex = (childCount - 1) / 2f;
 
@@ -31,8 +42,21 @@ public class CardHandFan : MonoBehaviour
 
             float targetZRotation = -distanceFromCenter * anglePerCard;
 
-            child.localPosition = new Vector3(targetX, targetY, 0);
-            child.localRotation = Quaternion.Euler(0, 0, targetZRotation);
+            Vector3 targerPos = new Vector3(targetX, targetY, 0);
+            Quaternion tragetRot = Quaternion.Euler(0, 0, targetZRotation);
+
+            if (Application.isPlaying)
+            {
+                child.localPosition = Vector3.SmoothDamp(child.localPosition, targerPos, ref velocities[i], positionSmoothTime);
+
+                child.localRotation = Quaternion.RotateTowards(child.localRotation, tragetRot, rotationSpeed * 360.0f * Time.deltaTime);
+            }
+            else
+            {
+
+                child.localPosition = targerPos;
+                child.localRotation = tragetRot;
+            }
         }
     }
 }

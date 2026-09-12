@@ -31,6 +31,9 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         ghostRT.sizeDelta = rectTransform.sizeDelta; //[cite: 1]
         ghostRT.localScale = rectTransform.localScale; //[cite: 1]
 
+        ghostRT.localPosition = rectTransform.localPosition;
+        ghostRT.localRotation = rectTransform.localRotation;
+
         // 3. Copy the image and make it semi-transparent[cite: 1]
         Image myImage = GetComponent<Image>(); //[cite: 1]
         if (myImage != null) //[cite: 1]

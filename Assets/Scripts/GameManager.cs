@@ -30,6 +30,12 @@ public class GameManager : MonoBehaviour
     private int currentDealerSeat;
     private const int WINNING_SCORE = 1000;
 
+    [Header("Deal Animation")]
+    //public Transform dealOrigin;      // an empty Transform marking the deck's screen position
+    public Sprite cardBackSprite;
+    public float dealStagger = 0.06f; // delay between successive cards being dealt
+    public float revealDelay = 0.15f; // pause after a human card is dealt before it flips
+
     void Start()
     {
         playZones = new Transform[] { myPlayZone, rightPlayZone, topPlayZone, leftPlayZone };
@@ -61,7 +67,7 @@ public class GameManager : MonoBehaviour
             int seed = UnityEngine.Random.Range(0, int.MaxValue);
             List<Card>[] dealtHands = Dealer.Deal(seed);
 
-            SpawnCardsForHuman(dealtHands[0]);
+            await DealAllHandsAnimated(dealtHands, currentDealerSeat);
 
             Task<Arrangement>[] arrangementTasks = new Task<Arrangement>[4];
             for (int i = 0; i < 4; i++)
@@ -194,6 +200,7 @@ public class GameManager : MonoBehaviour
             startScales[i] = cards[i].localScale;
 
             cards[i].SetParent(spawnZone, false);
+            cards[i].position = spawnZone.position;
             cards[i].localScale = Vector3.one;
             if (cards[i].TryGetComponent(out DraggableCard drag)) drag.enabled = false;
         }
@@ -313,12 +320,17 @@ public class GameManager : MonoBehaviour
         if (allCards.Count != 13) return;
 
         // 2. Slice them into groups based on their visual order
-        List<Card> hand1 = allCards.GetRange(0, 3);
-        List<Card> hand2 = allCards.GetRange(3, 3);
-        List<Card> hand3 = allCards.GetRange(6, 3);
+        List<Card> chunkA = allCards.GetRange(0, 3);
+        List<Card> chunkB = allCards.GetRange(3, 3);
+        List<Card> chunkC = allCards.GetRange(6, 3);
         List<Card> hand4 = allCards.GetRange(9, 4);
 
-        Arrangement playerArrangement = new Arrangement(hand1, hand2, hand3, hand4);
+        // Auto-detect which physical group is strongest — the groupings the player
+        // made are never touched, only which named slot (Hand1/2/3) each one fills.
+        List<List<Card>> threeCardGroups = new List<List<Card>> { chunkA, chunkB, chunkC };
+        threeCardGroups.Sort((a, b) => HandEvaluator.Evaluate(b).CompareTo(HandEvaluator.Evaluate(a)));
+
+        Arrangement playerArrangement = SubmissionParser.Parse(allCards);
 
         // 3. Check if the player's left-to-right sorting is legal[cite: 12]
         if (UpDownValidator.IsLegal(playerArrangement.Hands))
@@ -367,5 +379,77 @@ public class GameManager : MonoBehaviour
 
         string spriteName = $"{rankString}_{card.Suit}";
         return Resources.Load<Sprite>($"CardFaces/{spriteName}");
+    }
+
+    private async Task DealAllHandsAnimated(List<Card>[] dealtHands, int dealerSeat)
+    {
+        foreach (Transform child in mainHandZone) Destroy(child.gameObject);
+
+        Vector3 deckPosition = playZones[dealerSeat].position;
+
+        for (int round = 0; round < Dealer.CardsPerPlayer; round++)
+        {
+            for (int seat = 0; seat < 4; seat++)
+            {
+                Card card = dealtHands[seat][round];
+
+                if (seat == 0)
+                    DealHumanCard(card, deckPosition);
+                else
+                    _ = DealBotCard(card, seat, deckPosition); // visual only, fire-and-forget
+
+                await Task.Delay((int)(dealStagger * 1000));
+                if (!Application.isPlaying) return;
+            }
+        }
+
+        await Task.Delay(250); // let the fan settle before anyone can act
+    }
+
+    private void DealHumanCard(Card card, Vector3 deckPosition)
+    {
+        GameObject cardObj = Instantiate(uiCardPrefab, mainHandZone);
+        UICard uiCard = cardObj.GetComponent<UICard>();
+        uiCard.Initialize(card, GetCardSprite(card), cardBackSprite);
+
+        // Spawn at the deck; CardHandFan eases every child toward its fan slot
+        // every frame already, so it carries this one into place on its own.
+        cardObj.transform.position = deckPosition;
+
+        _ = RevealAfterDelay(uiCard);
+    }
+
+    private async Task RevealAfterDelay(UICard uiCard)
+    {
+        await Task.Delay((int)(revealDelay * 1000));
+        if (!Application.isPlaying || uiCard == null) return;
+        await uiCard.RevealAsync();
+    }
+
+    private async Task DealBotCard(Card card, int seat, Vector3 deckPosition)
+    {
+        GameObject cardObj = Instantiate(uiCardPrefab);
+        UICard uiCard = cardObj.GetComponent<UICard>();
+        uiCard.Initialize(card, GetCardSprite(card), cardBackSprite);
+
+        cardObj.transform.SetParent(playZones[0].parent, true); // table root
+        cardObj.transform.position = deckPosition;
+        cardObj.transform.localScale = Vector3.one * 0.75f;
+
+        Vector3 targetPos = playZones[seat].position;
+        float duration = 0.25f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (!Application.isPlaying) return;
+            elapsed += Time.deltaTime;
+            float t = Mathf.SmoothStep(0, 1, elapsed / duration);
+            cardObj.transform.position = Vector3.Lerp(deckPosition, targetPos, t);
+            await Task.Yield();
+        }
+
+        // Bots' hands stay hidden — this was just a dealt-card visual beat.
+        Destroy(cardObj);
     }
 }

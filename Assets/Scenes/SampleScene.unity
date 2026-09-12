@@ -173,6 +173,8 @@ MonoBehaviour:
   anglePerCard: 5.92
   yDropPerCard: 4.48
   verticalOffset: -4.52
+  positionSmoothTime: 0.12
+  rotationSpeed: 12
 --- !u!114 &163597602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -598,6 +600,9 @@ MonoBehaviour:
   topPlayZone: {fileID: 163597599}
   leftPlayZone: {fileID: 1130094215}
   seatOffsetDistance: 500
+  cardBackSprite: {fileID: -3464947134829299690, guid: 10c6155e34b11414abc9ada78db5cee1, type: 3}
+  dealStagger: 0.08
+  revealDelay: 0.15
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0
@@ -812,6 +817,8 @@ MonoBehaviour:
   anglePerCard: 5.92
   yDropPerCard: 4.48
   verticalOffset: -4.52
+  positionSmoothTime: 0.12
+  rotationSpeed: 12
 --- !u!1 &1130094214
 GameObject:
   m_ObjectHideFlags: 0
@@ -845,10 +852,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 304177780}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 200, y: 0}
-  m_SizeDelta: {x: 380, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 380, y: 0}
+  m_SizeDelta: {x: 380, y: 984}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &1130094216
 MonoBehaviour:
@@ -866,6 +873,8 @@ MonoBehaviour:
   anglePerCard: 5.92
   yDropPerCard: 4.48
   verticalOffset: -4.52
+  positionSmoothTime: 0.12
+  rotationSpeed: 12
 --- !u!114 &1130094218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -937,10 +946,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 304177780}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -200, y: 0}
-  m_SizeDelta: {x: 380, y: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -380, y: 0}
+  m_SizeDelta: {x: 380, y: 984}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!114 &1223565290
 MonoBehaviour:
@@ -958,6 +967,8 @@ MonoBehaviour:
   anglePerCard: 5.92
   yDropPerCard: 4.48
   verticalOffset: -4.52
+  positionSmoothTime: 0.12
+  rotationSpeed: 12
 --- !u!114 &1223565292
 MonoBehaviour:
   m_ObjectHideFlags: 0
