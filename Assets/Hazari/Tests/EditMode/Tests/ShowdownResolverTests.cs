@@ -61,5 +61,43 @@ namespace Hazari.Tests
             var b = ShowdownResolver.Resolve(arrangements, dealerSeat: 3);
             Assert.AreEqual(1, b.RoundWinners[0], "seat 1 threw later, so it wins the tie");
         }
+
+        private static Arrangement TwoRoundArrangement(List<Card> hand1, List<Card> hand2) => new Arrangement(
+            hand1,
+            hand2,
+            new List<Card> { C(Rank.Four, Suit.Clubs), C(Rank.Three, Suit.Clubs), C(Rank.Two, Suit.Clubs) },
+            new List<Card> { C(Rank.Five, Suit.Diamonds), C(Rank.Four, Suit.Diamonds), C(Rank.Three, Suit.Diamonds), C(Rank.Two, Suit.Diamonds) });
+
+        [Test]
+        public void Resolve_Round2Lead_IsRound1Winner_NotFixedByDealer()
+        {
+            // Round 1: seat 0 holds the unique A-A-A trail, so seat 0 wins round 1
+            // outright. Round 2: seats 1 and 2 hold an equal A-K-Q (tie).
+            // Winner-leads-next means round 2's order starts at seat 0 (round 1's
+            // winner) -> 0,1,2,3 -> seat 2 throws later and wins the tie. Under the
+            // old fixed-order rule (dealer=1 -> lead=2 every round), round 2's order
+            // would instead be 2,3,0,1 -> seat 1 would wrongly win.
+            var arrangements = new List<Arrangement>
+            {
+                TwoRoundArrangement(
+                    hand1: new List<Card> { C(Rank.Ace, Suit.Clubs), C(Rank.Ace, Suit.Diamonds), C(Rank.Ace, Suit.Hearts) },
+                    hand2: new List<Card> { C(Rank.Nine, Suit.Clubs), C(Rank.Three, Suit.Diamonds), C(Rank.Two, Suit.Spades) }),
+                TwoRoundArrangement(
+                    hand1: new List<Card> { C(Rank.King, Suit.Clubs), C(Rank.Nine, Suit.Diamonds), C(Rank.Two, Suit.Spades) },
+                    hand2: new List<Card> { C(Rank.Ace, Suit.Spades), C(Rank.King, Suit.Spades), C(Rank.Queen, Suit.Spades) }),
+                TwoRoundArrangement(
+                    hand1: new List<Card> { C(Rank.Eight, Suit.Clubs), C(Rank.Nine, Suit.Hearts), C(Rank.Two, Suit.Diamonds) },
+                    hand2: new List<Card> { C(Rank.Ace, Suit.Hearts), C(Rank.King, Suit.Hearts), C(Rank.Queen, Suit.Hearts) }),
+                TwoRoundArrangement(
+                    hand1: new List<Card> { C(Rank.Seven, Suit.Clubs), C(Rank.Nine, Suit.Spades), C(Rank.Two, Suit.Hearts) },
+                    hand2: new List<Card> { C(Rank.Eight, Suit.Diamonds), C(Rank.Three, Suit.Clubs), C(Rank.Two, Suit.Clubs) })
+            };
+
+            var result = ShowdownResolver.Resolve(arrangements, dealerSeat: 1);
+
+            Assert.AreEqual(0, result.RoundWinners[0], "seat 0's unique trail wins round 1");
+            Assert.AreEqual(2, result.RoundWinners[1],
+                "round 2 must lead from seat 0 (round 1's winner), not dealer+1 - seat 2 throws later and wins the tie");
+        }
     }
 }

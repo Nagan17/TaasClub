@@ -12,6 +12,8 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private Canvas canvas;
     private Vector3 pointerOffset;
 
+    private Vector3 origScale; // Store the original scale of the card
+
     void Awake()
     {
         canvasGroup = GetComponent<CanvasGroup>(); //[cite: 1]
@@ -57,6 +59,9 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         canvasGroup.blocksRaycasts = false; //[cite: 1]
 
         transform.rotation = placeholder.transform.rotation; //[cite: 1]
+        origScale = transform.localScale; // Store the original scale of the card
+
+        transform.localScale *= 0.85f;
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -101,6 +106,8 @@ public class DraggableCard : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         // Swap the card into the exact index the placeholder was holding[cite: 1]
         transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex()); //[cite: 1]
+
+        transform.localScale = origScale; // Restore the original scale of the card
 
         // Destroy the placeholder[cite: 1]
         Destroy(placeholder); //[cite: 1]

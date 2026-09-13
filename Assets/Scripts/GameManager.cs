@@ -111,8 +111,9 @@ public class GameManager : MonoBehaviour
         {
             if (!Application.isPlaying) return;
 
-            // Counter-clockwise throw order starting from dealer's right[cite: 5]
-            int leadSeat = (currentDealerSeat + 1) % 4;
+            // Round 1 leads from the dealer's right; every round after that is
+            // led by whoever won the previous round (rules §7).
+            int leadSeat = round == 0 ? (currentDealerSeat + 1) % 4 : result.RoundWinners[round - 1];
             List<Transform> cardsInCenter = new List<Transform>();
 
             for (int i = 0; i < 4; i++)
@@ -180,7 +181,8 @@ public class GameManager : MonoBehaviour
 
         foreach (Card logicCard in logicCards)
         {
-            GameObject newCardObj = Instantiate(uiCardPrefab);
+            GameObject newCardObj = Instantiate(uiCardPrefab, spawnZone, false);
+            newCardObj.transform.position = spawnZone.position;
             UICard uiCard = newCardObj.GetComponent<UICard>();
             uiCard.Initialize(logicCard, GetCardSprite(logicCard));
             spawnedCards.Add(newCardObj.transform);
@@ -192,30 +194,28 @@ public class GameManager : MonoBehaviour
     private async Task<List<Transform>> AnimateZoneToCenter(List<Transform> cards, Transform spawnZone, Vector3 centerTarget)
     {
         Quaternion[] startRotations = new Quaternion[cards.Count];
-        Vector3[] startScales = new Vector3[cards.Count]; // Track starting scale
+        Vector3[] startPositions = new Vector3[cards.Count];
+        Vector3[] startScales = new Vector3[cards.Count];
 
         for (int i = 0; i < cards.Count; i++)
         {
+            startPositions[i] = cards[i].position;
             startRotations[i] = cards[i].rotation;
             startScales[i] = cards[i].localScale;
 
-            cards[i].SetParent(spawnZone, false);
-            cards[i].position = spawnZone.position;
-            cards[i].localScale = Vector3.one;
+            cards[i].SetParent(spawnZone.parent, true);
             if (cards[i].TryGetComponent(out DraggableCard drag)) drag.enabled = false;
         }
 
-        await Task.Yield();
         if (!Application.isPlaying) return cards;
 
-        Vector3[] startPositions = new Vector3[cards.Count];
         for (int i = 0; i < cards.Count; i++)
         {
             startPositions[i] = cards[i].position;
             cards[i].SetParent(spawnZone.parent, true);
         }
 
-        float seatOffsetDistance = 180f;
+        float seatOffsetDistance = 250f;
         Vector3 directionFromCenter = (spawnZone.position - centerTarget).normalized;
         Vector3 finalGroupCenter = centerTarget + (directionFromCenter * seatOffsetDistance);
 

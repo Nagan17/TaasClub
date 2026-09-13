@@ -130,7 +130,6 @@ GameObject:
   - component: {fileID: 163597599}
   - component: {fileID: 163597603}
   - component: {fileID: 163597602}
-  - component: {fileID: 163597600}
   m_Layer: 5
   m_Name: TopPlayZone
   m_TagString: Untagged
@@ -157,24 +156,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: -200}
   m_SizeDelta: {x: 1920, y: 380}
   m_Pivot: {x: 0.5, y: 1}
---- !u!114 &163597600
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 163597598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 582582800aada8f438758a6e57d10424, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CardHandFan
-  spacing: 72.1
-  anglePerCard: 5.92
-  yDropPerCard: 4.48
-  verticalOffset: -4.52
-  positionSmoothTime: 0.12
-  rotationSpeed: 12
 --- !u!114 &163597602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,7 +257,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -4095211411479126022, guid: 5d459bc63def3194aa45196767d7ba24, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8076e97c059383c41ba41b2c4b0dc72f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -800,7 +781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 74f7d93d171b0f849a3ec30fc955cd48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DropZone
-  maxCards: 13
+  maxCards: 0
 --- !u!114 &814069132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -816,7 +797,7 @@ MonoBehaviour:
   spacing: 72.1
   anglePerCard: 5.92
   yDropPerCard: 4.48
-  verticalOffset: -4.52
+  verticalOffset: -8.14
   positionSmoothTime: 0.12
   rotationSpeed: 12
 --- !u!1 &1130094214
@@ -830,7 +811,6 @@ GameObject:
   - component: {fileID: 1130094215}
   - component: {fileID: 1130094219}
   - component: {fileID: 1130094218}
-  - component: {fileID: 1130094216}
   m_Layer: 5
   m_Name: LeftPlayZone
   m_TagString: Untagged
@@ -857,24 +837,6 @@ RectTransform:
   m_AnchoredPosition: {x: 380, y: 0}
   m_SizeDelta: {x: 380, y: 984}
   m_Pivot: {x: 0, y: 0.5}
---- !u!114 &1130094216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1130094214}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 582582800aada8f438758a6e57d10424, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CardHandFan
-  spacing: 72.1
-  anglePerCard: 5.92
-  yDropPerCard: 4.48
-  verticalOffset: -4.52
-  positionSmoothTime: 0.12
-  rotationSpeed: 12
 --- !u!114 &1130094218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -924,7 +886,6 @@ GameObject:
   - component: {fileID: 1223565289}
   - component: {fileID: 1223565293}
   - component: {fileID: 1223565292}
-  - component: {fileID: 1223565290}
   m_Layer: 5
   m_Name: RightPlayZone
   m_TagString: Untagged
@@ -951,24 +912,6 @@ RectTransform:
   m_AnchoredPosition: {x: -380, y: 0}
   m_SizeDelta: {x: 380, y: 984}
   m_Pivot: {x: 1, y: 0.5}
---- !u!114 &1223565290
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1223565288}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 582582800aada8f438758a6e57d10424, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CardHandFan
-  spacing: 72.1
-  anglePerCard: 5.92
-  yDropPerCard: 4.48
-  verticalOffset: -4.52
-  positionSmoothTime: 0.12
-  rotationSpeed: 12
 --- !u!114 &1223565292
 MonoBehaviour:
   m_ObjectHideFlags: 0
